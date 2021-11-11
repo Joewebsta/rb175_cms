@@ -29,6 +29,7 @@ PLATFORMS
 
 DEPENDENCIES
   erubis
+  rack-test
   sinatra (~> 1.4.7)
   sinatra-contrib
   sinatra-reloader (~> 1.0)
