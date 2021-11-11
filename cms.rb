@@ -4,7 +4,9 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'tilt/erubis'
 
+root = File.expand_path(__dir__)
+
 get '/' do
-  @docs = Dir.glob('*.txt', base: 'data').sort
+  @files = Dir.glob(root + '/data/*').map { |path| File.basename(path) }
   erb :index
 end
