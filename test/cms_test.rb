@@ -24,11 +24,23 @@ class CmsTest < Minitest::Test
     assert_includes last_response.body, 'history.txt'
   end
 
-  def test_files
+  def test_viewing_text_document
     get '/about.txt'
 
     assert_equal 200, last_response.status
     assert_equal 'text/plain', last_response['Content-Type']
     assert_includes last_response.body, 'Ruby 0.95 released'
+  end
+
+  def test_document_not_found
+    get '/joe.txt'
+    assert_equal 302, last_response.status
+
+    get '/'
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, 'joe.txt does not exist.'
+
+    get '/'
+    refute_includes last_response.body, 'joe.txt does not exist.'
   end
 end
