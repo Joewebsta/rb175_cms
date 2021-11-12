@@ -43,4 +43,11 @@ class CmsTest < Minitest::Test
     get '/'
     refute_includes last_response.body, 'joe.txt does not exist.'
   end
+
+  def test_markdown_document
+    get '/about.md'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response.content_type
+    assert_includes last_response.body, '<h1>Ruby is...</h1>'
+  end
 end
