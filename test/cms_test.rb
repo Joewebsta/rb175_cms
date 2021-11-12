@@ -52,23 +52,24 @@ class CmsTest < Minitest::Test
   end
 
   def test_document_edit
-    get '/about.md/edit'
-    assert_equal 200, last_response.status
-    assert_equal 'text/html;charset=utf-8', last_response.content_type
-    assert_includes last_response.body, 'Edit content of about.md'
-    assert_includes last_response.body, '# Ruby is...'
+    get '/changes.txt/edit'
 
-    post '/about.md/edit'
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, '<textarea'
+    assert_includes last_response.body, '<button type="submit"'
+  end
+
+  def test_updating_document
+    post '/changes.txt', content: 'new content'
+
     assert_equal 302, last_response.status
 
-    get '/'
-    assert_equal 200, last_response.status
-    assert_equal 'text/html;charset=utf-8', last_response.content_type
-    assert_includes last_response.body, 'about.md has been updated.'
+    get last_response['Location']
 
-    get '/'
+    assert_includes last_response.body, 'changes.txt has been updated'
+
+    get '/changes.txt'
     assert_equal 200, last_response.status
-    assert_equal 'text/html;charset=utf-8', last_response.content_type
-    refute_includes last_response.body, 'about.md has been updated.'
+    assert_includes last_response.body, 'new content'
   end
 end

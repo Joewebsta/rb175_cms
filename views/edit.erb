@@ -1,7 +1,7 @@
-<p>Edit content of <%= @filename %>:</p>
-
-<form method="post" action="/<%= @filename %>/edit"=>
-  <textarea rows="20" cols="60" name="content" value=""><%= @content %></textarea>
-  <input type="submit" value="Save Changes" style="
-    display: inherit;">
+<form method="post" action="/<%= @filename %>"=>
+  <label for="content">Edit content of <%= @filename %>:</label>
+  <div>
+    <textarea name="content" id="content" rows="20" cols="60"><%= @content %></textarea>
+  </div>
+    <button type="submit">Save Changes</button>
 </form>
