@@ -50,4 +50,25 @@ class CmsTest < Minitest::Test
     assert_equal 'text/html;charset=utf-8', last_response.content_type
     assert_includes last_response.body, '<h1>Ruby is...</h1>'
   end
+
+  def test_document_edit
+    get '/about.md/edit'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response.content_type
+    assert_includes last_response.body, 'Edit content of about.md'
+    assert_includes last_response.body, '# Ruby is...'
+
+    post '/about.md/edit'
+    assert_equal 302, last_response.status
+
+    get '/'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response.content_type
+    assert_includes last_response.body, 'about.md has been updated.'
+
+    get '/'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response.content_type
+    refute_includes last_response.body, 'about.md has been updated.'
+  end
 end

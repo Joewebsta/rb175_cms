@@ -45,3 +45,24 @@ get '/:filename' do
     redirect '/'
   end
 end
+
+get '/:filename/edit' do
+  # Add validation
+  # Reduce duplication with /:filename
+
+  file_path = root + '/data/' + params[:filename]
+  @filename = params[:filename]
+  @content = File.read(file_path)
+
+  erb :edit
+end
+
+post '/:filename/edit' do
+  session[:message] = "#{params[:filename]} has been updated."
+
+  file_path = root + '/data/' + params[:filename]
+  content = params[:content]
+  File.write(file_path, content)
+
+  redirect '/'
+end
