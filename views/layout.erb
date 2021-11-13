@@ -10,8 +10,11 @@
   </head>
   <body>
     <section class="content">
-      <%= yield %>
+      <% if session[:message]%>
+        <p class="message-bar"><%= session.delete(:message) %></p>
+      <% end %> 
       
+      <%= yield %>
     </section>
   </body>
 </html>

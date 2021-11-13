@@ -55,10 +55,11 @@ post '/new' do
 
   if filename.empty?
     session[:message] = 'A name is required.'
-    redirect '/new'
+    status 422
+    erb '/new'
   else
     file_path = File.join(data_path, filename)
-    File.new(file_path, 'w')
+    File.write(file_path, '')
 
     session[:message] = "#{filename} was created."
     redirect '/'
