@@ -1,6 +1,6 @@
 a {
   color: inherit;
-  text-decoration: none; 
+  /* text-decoration: none;  */
 }
 
 body {
@@ -21,13 +21,10 @@ body {
 
 .index {
   margin-left: 30px;
+  margin-bottom: 30px;
 }
 
 .index-item {
   list-style: initial;
   margin-bottom: 10px;
-}
-
-.index-link {
-  text-decoration: underline;
 }
