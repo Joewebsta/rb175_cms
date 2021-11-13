@@ -1,12 +1,12 @@
 <% if session[:message]%>
-  <p><%= session.delete(:message) %></p>
+  <p class="message-bar"><%= session.delete(:message) %></p>
 <% end %> 
 
-<ul>
+<ul class="index">
   <% @files.each do |file| %>
-    <li>
-      <a href="<%= file %>"><%= file %></a>
-      <a href="<%= file %>/edit">edit</a>
+    <li class="index-item">
+      <a href="<%= file %>" class="index-link"><%= file %></a>
+      <a href="<%= file %>/edit" class="index-link">edit</a>
     </li>
   <% end %>
 </ul>
