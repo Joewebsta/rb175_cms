@@ -51,12 +51,11 @@ end
 
 post '/new' do
   filename = params[:filename]
-  filename = "#{filename}.txt" if File.extname(filename).empty?
 
   if filename.empty?
     session[:message] = 'A name is required.'
     status 422
-    erb '/new'
+    erb :new
   else
     file_path = File.join(data_path, filename)
     File.write(file_path, '')

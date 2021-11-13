@@ -92,4 +92,30 @@ class CmsTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_includes last_response.body, 'new content'
   end
+
+  def test_viewing_new_document
+    get '/new'
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, 'Add a new document:'
+    assert_includes last_response.body, '<input'
+    assert_includes last_response.body, '<button type="submit"'
+  end
+
+  def test_creating_document
+    post '/new', filename: 'joe.txt'
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'joe.txt was created.'
+
+    get '/'
+    assert_includes last_response.body, 'joe.txt'
+  end
+
+  def test_creating_document_without_filename
+    post '/new', filename: ''
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'A name is required.'
+  end
 end
