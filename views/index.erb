@@ -3,6 +3,9 @@
     <li class="index-item">
       <a href="<%= file %>" class="index-link"><%= file %></a>
       <a href="<%= file %>/edit" class="index-link">edit</a>
+      <form class="inline" method="post" action="/<%= file %>/destroy">
+        <button type="submit">delete</button>
+      </form>
     </li>
   <% end %>
 </ul>
