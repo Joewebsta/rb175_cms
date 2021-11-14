@@ -100,3 +100,28 @@ post '/:filename/destroy' do
   session[:message] = "#{params[:filename]} was deleted."
   redirect '/'
 end
+
+get '/users/signin' do
+  erb :signin
+end
+
+post '/users/signin' do
+  @username = params[:username]
+  password = params[:password]
+
+  if @username == 'admin' && password == 'secret'
+    session[:message] = 'Welcome!'
+    session[:username] = @username
+    session[:signedin] = true
+    redirect '/'
+  else
+    session[:message] = 'Invalid Credentials'
+    erb :signin
+  end
+end
+
+post '/users/signout' do
+  session[:message] = 'You have been signed out.'
+  session[:signedin] = false
+  redirect '/'
+end
