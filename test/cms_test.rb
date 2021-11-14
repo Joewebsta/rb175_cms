@@ -29,6 +29,11 @@ class CmsTest < Minitest::Test
     end
   end
 
+  def session
+    # last_request.env['rack.session']
+    last_request.session
+  end
+
   def test_index
     create_document 'about.md'
     create_document 'changes.txt'
@@ -54,10 +59,7 @@ class CmsTest < Minitest::Test
   def test_document_not_found
     get '/joe.txt'
     assert_equal 302, last_response.status
-
-    get last_response['Location']
-    assert_equal 200, last_response.status
-    assert_includes last_response.body, 'joe.txt does not exist.'
+    assert_equal 'joe.txt does not exist.', session[:message]
   end
 
   def test_markdown_document
@@ -83,10 +85,7 @@ class CmsTest < Minitest::Test
     post '/about.txt', content: 'new content'
 
     assert_equal 302, last_response.status
-
-    get last_response['Location']
-
-    assert_includes last_response.body, 'about.txt has been updated'
+    assert_equal 'about.txt has been updated.', session[:message]
 
     get '/about.txt'
     assert_equal 200, last_response.status
@@ -105,9 +104,7 @@ class CmsTest < Minitest::Test
   def test_creating_document
     post '/new', filename: 'joe.txt'
     assert_equal 302, last_response.status
-
-    get last_response['Location']
-    assert_includes last_response.body, 'joe.txt was created.'
+    assert_equal 'joe.txt was created.', session[:message]
 
     get '/'
     assert_includes last_response.body, 'joe.txt'
@@ -117,6 +114,17 @@ class CmsTest < Minitest::Test
     post '/new', filename: ''
     assert_equal 422, last_response.status
     assert_includes last_response.body, 'A name is required.'
+  end
+
+  def test_deleting_document
+    create_document('test.txt')
+
+    post '/test.txt/destroy'
+    assert_equal 302, last_response.status
+    assert_equal 'test.txt was deleted.', session[:message]
+
+    get '/'
+    refute_includes last_response.body, 'href="/test.txt"'
   end
 
   def test_signin_page
@@ -130,26 +138,29 @@ class CmsTest < Minitest::Test
   def test_signing_in
     post '/users/signin', username: 'admin', password: 'secret'
     assert_equal 302, last_response.status
+    assert_equal 'Welcome!', session[:message]
+    assert_equal 'admin', session[:username]
 
     get last_response['Location']
-    assert_includes last_response.body, 'Welcome!'
     assert_includes last_response.body, 'Signed in as admin.'
   end
 
   def test_invalid_sign_in
     post '/users/signin', username: 'admin', password: 'secrets'
     assert_equal 422, last_response.status
+    assert_nil session[:username]
     assert_includes last_response.body, 'Invalid Credentials'
   end
 
-  def test_signing_out
-    post '/users/signin', username: 'admin', password: 'secret'
-    get last_response['Location']
-    assert_includes last_response.body, 'Welcome!'
+  def test_signout
+    get '/', {}, { 'rack.session' => { username: 'admin' } }
+    assert_includes last_response.body, 'Signed in as admin'
 
     post '/users/signout'
+    assert_equal 'You have been signed out.', session[:message]
+
     get last_response['Location']
-    assert_includes last_response.body, 'You have been signed out.'
+    assert_nil session[:username]
     assert_includes last_response.body, 'Sign In'
   end
 end
