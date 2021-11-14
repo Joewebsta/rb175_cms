@@ -118,4 +118,38 @@ class CmsTest < Minitest::Test
     assert_equal 422, last_response.status
     assert_includes last_response.body, 'A name is required.'
   end
+
+  def test_signin_page
+    get '/users/signin'
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, '<input'
+    assert_includes last_response.body, '<button type="submit">'
+  end
+
+  def test_signing_in
+    post '/users/signin', username: 'admin', password: 'secret'
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome!'
+    assert_includes last_response.body, 'Signed in as admin.'
+  end
+
+  def test_invalid_sign_in
+    post '/users/signin', username: 'admin', password: 'secrets'
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'Invalid Credentials'
+  end
+
+  def test_signing_out
+    post '/users/signin', username: 'admin', password: 'secret'
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome!'
+
+    post '/users/signout'
+    get last_response['Location']
+    assert_includes last_response.body, 'You have been signed out.'
+    assert_includes last_response.body, 'Sign In'
+  end
 end
