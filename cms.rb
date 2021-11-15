@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require 'bcrypt'
+require 'redcarpet'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
-require 'redcarpet'
 require 'yaml'
 
 configure do
@@ -47,6 +48,17 @@ end
 
 def user_signed_in?
   session.key?(:username)
+end
+
+def valid_credentials?(username, password)
+  credentials = load_user_credentials
+
+  if credentials.key?(username)
+    bcrypt_password = BCrypt::Password.new(credentials[username])
+    bcrypt_password == password
+  else
+    false
+  end
 end
 
 def require_signed_in_user
@@ -136,10 +148,10 @@ get '/users/signin' do
 end
 
 post '/users/signin' do
-  credentials = load_user_credentials
   @username = params[:username]
 
-  if credentials.key?(@username) && credentials[@username] == params[:password]
+  # if credentials.key?(@username) && credentials[@username] == params[:password]
+  if valid_credentials?(@username, params[:password])
     session[:username] = @username
     session[:message] = 'Welcome!'
     redirect '/'

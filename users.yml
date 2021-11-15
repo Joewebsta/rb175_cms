@@ -1,6 +1,6 @@
 ---
 {
-  joe: joe,
-  scott: scott,
-  admin: secret
+  joe: $2a$12$bQAFkcXz02DzxzbKRfX23eXFH5uWI9yNbbzRed0GEnOL8e3sgF3MO,
+  scott: $2a$12$7vnpvip8PKVLSW9eNI0jlOkpDIWJtvjX0LcqqR.2TMzM1WUC06sF.,
+  admin: $2a$12$MsftS.IOtvf9eqT9vQ14Xe5nyabVInsMfBvrCOI7AOSPj4Fj3C0Iu
 }
